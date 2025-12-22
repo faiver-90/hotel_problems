@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-5">
+  <div class="container" style="max-width: 420px;">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4">
+        <h1 class="h4 mb-3 text-center">{% block card_title %}{% endblock %}</h1>
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger mb-3">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        {% block card_content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
