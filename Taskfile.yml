@@ -1,0 +1,233 @@
+version: "3"
+
+vars:
+  DC: docker compose
+  SRC: .
+  MANAGE: python manage.py
+
+tasks:
+  # ===== Docker / Compose =====
+  up:
+    desc: "Build (no cache) + up"
+    cmds:
+      - "{{.DC}} build --no-cache"
+      - "{{.DC}} up -d"
+
+  down:
+    desc: "Stop & remove containers"
+    cmds:
+      - "{{.DC}} down"
+
+  re-all:
+    desc: "Full reset: down -v, prune, rebuild, up"
+    cmds:
+      - "{{.DC}} down -v --remove-orphans"
+      - "docker system prune -af --volumes"
+      - "{{.DC}} build --no-cache"
+      - "{{.DC}} up -d --force-recreate"
+
+  re-create:
+    desc: "Up with --force-recreate"
+    cmds:
+      - "{{.DC}} up -d --force-recreate"
+
+  logs:
+    desc: "Tail compose logs"
+    cmds:
+      - "{{.DC}} logs -f --tail=200"
+
+
+  # ===== Ruff =====
+  ruff-check:
+    desc: "Ruff check"
+    cmds:
+      - "poetry run ruff check {{.SRC}}"
+
+  ruff-fix:
+    desc: "Ruff fix (safe)"
+    cmds:
+      - "poetry run ruff check {{.SRC}} --fix"
+
+  ruff-fix-all:
+    desc: "Ruff fix (unsafe)"
+    cmds:
+      - "poetry run ruff check {{.SRC}} --fix --unsafe-fixes"
+
+  ruff-format:
+    desc: "Ruff format"
+    cmds:
+      - "poetry run ruff format {{.SRC}}"
+
+  ruff-format-check:
+    desc: "Ruff format --check"
+    cmds:
+      - "poetry run ruff format {{.SRC}} --check"
+
+  ruff-clean:
+    desc: "Remove .ruff_cache"
+    cmds:
+      - "rm -rf .ruff_cache"
+
+  lint:
+    desc: "Ruff fix + format"
+    deps: [ruff-fix, ruff-format]
+
+  # ===== Poetry =====
+  install:
+    desc: "poetry install"
+    cmds:
+      - "poetry install"
+
+  # ===== Django manage.py =====
+  run:
+    desc: "Run Django dev server"
+    cmds:
+      - "{{.MANAGE}} runserver 0.0.0.0:8000"
+
+  shell:
+    desc: "Django shell"
+    cmds:
+      - "{{.MANAGE}} shell"
+
+  makemigrations:
+    desc: "Create Django migrations (optionally for an app)"
+    vars:
+      APP: '{{.CLI_ARGS}}'
+    cmds:
+      - |
+        {{- if .APP -}}
+        {{.MANAGE}} makemigrations {{.APP}}
+        {{- else -}}
+        {{.MANAGE}} makemigrations
+        {{- end -}}
+
+  migrate:
+    desc: "Apply Django migrations"
+    cmds:
+      - "{{.MANAGE}} migrate"
+
+  createsuperuser:
+    desc: "Create Django superuser"
+    cmds:
+      - "{{.MANAGE}} createsuperuser"
+
+  collectstatic:
+    desc: "Collect static files"
+    cmds:
+      - "{{.MANAGE}} collectstatic --noinput"
+
+  check:
+    desc: "Django system checks"
+    cmds:
+      - "{{.MANAGE}} check"
+
+  test:
+    desc: "Run tests (Django test runner)"
+    vars:
+      ARGS: '{{.CLI_ARGS}}'
+    cmds:
+      - |
+        {{- if .ARGS -}}
+        {{.MANAGE}} test {{.ARGS}}
+        {{- else -}}
+        {{.MANAGE}} test
+        {{- end -}}
+
+  # ===== Local bootstrap =====
+  up_web:
+    desc: "Install + migrate + run (local)"
+    cmds:
+      - task: install
+      - task: migrate
+      - task: run
+
+  # ===== Compose helpers (run inside container) =====
+  dc:migrate:
+    desc: "Run migrate in api container"
+    cmds:
+      - "{{.DC}} run --rm api {{.MANAGE}} migrate"
+
+  dc:makemigrations:
+    desc: "Run makemigrations in api container (optionally for an app)"
+    vars:
+      APP: '{{.CLI_ARGS}}'
+    cmds:
+      - |
+        {{- if .APP -}}
+        {{.DC}} run --rm api {{.MANAGE}} makemigrations {{.APP}}
+        {{- else -}}
+        {{.DC}} run --rm api {{.MANAGE}} makemigrations
+        {{- end -}}
+
+  dc:createsuperuser:
+    desc: "Create superuser in api container"
+    cmds:
+      - "{{.DC}} run --rm api {{.MANAGE}} createsuperuser"
+
+  dc:shell:
+    desc: "Django shell in api container"
+    cmds:
+      - "{{.DC}} run --rm api {{.MANAGE}} shell"
+
+  dc:test:
+    desc: "Run tests in api container"
+    vars:
+      ARGS: '{{.CLI_ARGS}}'
+    cmds:
+      - |
+        {{- if .ARGS -}}
+        {{.DC}} run --rm api {{.MANAGE}} test {{.ARGS}}
+        {{- else -}}
+        {{.DC}} run --rm api {{.MANAGE}} test
+        {{- end -}}
+
+  # ===== Git commit with Ruff + push =====
+  commit:
+    desc: "Format with Ruff, commit with message, and push"
+    vars:
+      MSG: '{{.CLI_ARGS}}'
+    preconditions:
+      - sh: 'test -n "{{.MSG}}"'
+        msg: 'Ошибка: Не указан комментарий. Использование: task commit -- "комментарий"'
+    cmds:
+      - "poetry run ruff format ."
+      - "poetry run ruff check . --fix"
+      - "git add ."
+      - 'git commit -m "{{.MSG}}" --no-verify'
+      - "git push"
+      - 'echo "Коммит успешно выполнен и отправлен."'
+
+  # ===== Docker Hub (image build/push) =====
+  docker:login:
+    desc: "Login to Docker Hub"
+    cmds:
+      - "docker login"
+
+  docker:build:
+    desc: "Build Docker image"
+    cmds:
+      - "docker build -t {{.DOCKERHUB_USER}}/{{.MSG}}:{{.TAG}} ."
+
+  docker:tag:latest:
+    desc: "Tag image as latest"
+    cmds:
+      - "docker tag {{.DOCKERHUB_USER}}/{{.MSG}}:{{.TAG}} {{.DOCKERHUB_USER}}/{{.MSG}}:latest"
+
+  docker:push:
+    desc: "Push Docker image with version tag"
+    cmds:
+      - "docker push {{.DOCKERHUB_USER}}/{{.MSG}}:{{.TAG}}"
+
+  docker:push:latest:
+    desc: "Push Docker image with latest tag"
+    cmds:
+      - "docker push {{.DOCKERHUB_USER}}/{{.MSG}}:latest"
+
+  docker:release:
+    desc: "Build and push version + latest"
+    deps:
+      - docker:build
+      - docker:tag:latest
+    cmds:
+      - "task docker:push"
+      - "task docker:push:latest"
