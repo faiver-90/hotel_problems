@@ -18,6 +18,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "users",
+    "hotels",
+    "issues",
+    "notifications",
 ]
 
 MIDDLEWARE = [
@@ -51,18 +54,23 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 ASGI_APPLICATION = "core.asgi.application"
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": settings.database.postgres_db,
-#         "USER": settings.database.postgres_user,
-#         "PASSWORD": settings.database.postgres_password,
-#         "HOST": settings.database.postgres_host,
-#         "PORT": settings.database.postgres_port,
-#         "CONN_MAX_AGE": 60,
-#     }
-# }
-
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": settings.database.postgres_db,
+        "USER": settings.database.postgres_user,
+        "PASSWORD": settings.database.postgres_password,
+        "HOST": settings.database.postgres_host,
+        "PORT": settings.database.postgres_port,
+        "CONN_MAX_AGE": 60,
+    }
+}
+print(
+    settings.database.postgres_db,
+    settings.database.postgres_user,
+    settings.database.postgres_password,
+    settings.database.postgres_host,
+)
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
