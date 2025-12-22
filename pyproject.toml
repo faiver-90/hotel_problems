@@ -16,7 +16,11 @@ dependencies = [
     "psycopg[binary] (>=3.3.2,<4.0.0)",
     "black (>=25.12.0,<26.0.0)",
     "djangorestframework (>=3.16.1,<4.0.0)",
-    "djangorestframework-simplejwt (>=5.5.1,<6.0.0)"
+    "djangorestframework-simplejwt (>=5.5.1,<6.0.0)",
+    "pytest (>=9.0.2,<10.0.0)",
+    "pytest-django (>=4.11.1,<5.0.0)",
+    "pytest-cov (>=7.0.0,<8.0.0)",
+    "faker (>=39.0.0,<40.0.0)"
 ]
 
 
@@ -26,8 +30,9 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
-addopts = "-q --cov=app --cov-report=term-missing --cov-fail-under=70"
+DJANGO_SETTINGS_MODULE="core.settings.dev"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "-q -v --reuse-db --cov-report=term-missing --cov-fail-under=70"
 
 [tool.coverage.run]
 branch = true
