@@ -5,6 +5,7 @@ import uuid
 from django.db import models
 
 from common.common_base_model import BaseModel
+from common.utils import formater_str_models
 
 
 class ChannelType(models.TextChoices):
@@ -22,15 +23,18 @@ class UserNotificationSettings(BaseModel):
         related_name="notification_settings",
     )
     channel_type = models.CharField(max_length=16, choices=ChannelType.choices)
-    address = models.CharField(
-        max_length=255
-    )  # email / telegram_chat_id / push_token
+    address = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
 
     class Meta:
         indexes = [
             models.Index(fields=["user", "channel_type", "is_active"]),
         ]
+
+    def __str__(self) -> str:
+        return formater_str_models(
+            self.user, self.channel_type, self.is_active
+        )
 
 
 class NotificationLog(BaseModel):
@@ -62,3 +66,6 @@ class NotificationLog(BaseModel):
         indexes = [
             models.Index(fields=["status", "created_at"]),
         ]
+
+    def __str__(self) -> str:
+        return formater_str_models(self.user, self.channel_type, self.status)

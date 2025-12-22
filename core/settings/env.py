@@ -23,7 +23,7 @@ class DatabaseSettings(BaseSettings):
 class Settings(BaseSettings):
     debug: bool = Field(False, alias="DEBUG")
 
-    database: DatabaseSettings = DatabaseSettings()
+    database: DatabaseSettings = DatabaseSettings()  # type: ignore
 
     secret_key: str = Field("", alias="SECRET_KEY")
 
@@ -40,4 +40,4 @@ class Settings(BaseSettings):
     )
 
 
-settings = Settings()
+settings = Settings()  # type: ignore

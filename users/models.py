@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 import uuid
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 from django.utils import timezone
 
 from common.common_base_model import BaseModel
+from common.utils import formater_str_models
 
 
-def default_valid_until():
+def default_valid_until() -> datetime:
     return timezone.now() + timedelta(days=7)
 
 
@@ -42,6 +43,9 @@ class GuestStay(BaseModel):
                 name="uniq_guest_stay_session_key",
             ),
         ]
+
+    def __str__(self) -> str:
+        return formater_str_models(self.hotel)
 
 
 class StaffUser(AbstractUser):
@@ -75,3 +79,6 @@ class StaffUser(AbstractUser):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return formater_str_models(self.email, self.username)

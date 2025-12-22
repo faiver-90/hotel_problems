@@ -5,6 +5,7 @@ import uuid
 from django.db import models
 
 from common.common_base_model import BaseModel
+from common.utils import formater_str_models
 
 
 class IssueCategory(BaseModel):
@@ -32,6 +33,9 @@ class IssueCategory(BaseModel):
         indexes = [
             models.Index(fields=["hotel", "is_active"]),
         ]
+
+    def __str__(self) -> str:
+        return formater_str_models(self.name)
 
 
 class Issue(BaseModel):
@@ -119,6 +123,9 @@ class Issue(BaseModel):
             models.Index(fields=["hotel", "created_at"]),
         ]
 
+    def __str__(self) -> str:
+        return formater_str_models(self.hotel, self.status)
+
 
 class IssueComment(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -148,6 +155,9 @@ class IssueComment(BaseModel):
             models.Index(fields=["issue", "created_at"]),
         ]
 
+    def __str__(self) -> str:
+        return formater_str_models(self.issue, self.author_type)
+
 
 class IssueAttachment(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -157,6 +167,9 @@ class IssueAttachment(BaseModel):
     )
     file_url = models.URLField(max_length=1024)
     file_type = models.CharField(max_length=128)
+
+    def __str__(self) -> str:
+        return formater_str_models(self.file_url, self.file_type)
 
 
 class IssueStatusHistory(BaseModel):
@@ -188,3 +201,6 @@ class IssueStatusHistory(BaseModel):
         indexes = [
             models.Index(fields=["issue", "updated_at"]),
         ]
+
+    def __str__(self) -> str:
+        return formater_str_models(self.issue, self.changed_by_user)

@@ -5,11 +5,11 @@ import uuid
 from django.db import models
 
 from common.common_base_model import BaseModel
+from common.utils import formater_str_models
 
 
 class Hotel(BaseModel):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    id = models.IntegerField(primary_key=True, editable=False)
+    id = models.AutoField(primary_key=True, editable=False)
 
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=32, unique=True, db_index=True)  # из QR
@@ -18,28 +18,24 @@ class Hotel(BaseModel):
     slug = models.SlugField(max_length=255, unique=True)
 
     def __str__(self) -> str:
-        return f"{self.code} — {self.name}"
+        return formater_str_models(self.name, self.code)
 
 
 class HotelDepartment(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    hotel = models.ForeignKey(
-        Hotel, on_delete=models.CASCADE, related_name="departments"
-    )
     name = models.CharField(max_length=128)
     code = models.CharField(max_length=16)  # HK / ENG / REC ...
     default_sla_minutes = models.PositiveIntegerField(default=60)
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = [("hotel", "code")]
         indexes = [
-            models.Index(fields=["hotel", "code"]),
+            models.Index(fields=["code", "is_active"]),
         ]
 
     def __str__(self) -> str:
-        return f"{self.hotel.code}:{self.code}"
+        return formater_str_models(self.name, self.code)
 
 
 class Role(BaseModel):
@@ -55,7 +51,7 @@ class Role(BaseModel):
     name = models.CharField(max_length=128)
 
     def __str__(self) -> str:
-        return self.code
+        return formater_str_models(self.name)
 
 
 class HotelUserRole(BaseModel):
@@ -85,6 +81,9 @@ class HotelUserRole(BaseModel):
             models.Index(fields=["hotel", "department"]),
         ]
 
+    def __str__(self) -> str:
+        return formater_str_models(self.hotel, self.role)
+
 
 class Room(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -108,4 +107,4 @@ class Room(BaseModel):
         ]
 
     def __str__(self) -> str:
-        return f"{self.hotel.code}:{self.number}"
+        return formater_str_models(self.hotel, self.number)
