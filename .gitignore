@@ -8,7 +8,7 @@
 !*.env.example
 !.env.example
 !**/*.env.example
-
+staticfiles
 build/
 dist/
 *.egg-info/
