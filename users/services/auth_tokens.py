@@ -18,11 +18,18 @@ class TokenPair:
 
 
 class AuthTokenService:
-    """Work with SimpleJWT serializers (obtain/refresh) in one place."""
+    """
+    JWT support for future API clients.
 
-    def obtain_pair_by_username(
-        self, *, username: str, password: str
-    ) -> TokenPair:
+    Currently NOT used for staff UI authentication.
+    Staff UI uses Django session authentication.
+
+    JWT tokens are obtained/refreshed internally
+    (without calling HTTP endpoints).
+    """
+
+    @staticmethod
+    def obtain_pair_by_username(*, username: str, password: str) -> TokenPair:
         serializer = TokenObtainPairSerializer(
             data={"username": username, "password": password}
         )
@@ -30,12 +37,14 @@ class AuthTokenService:
         data = serializer.validated_data
         return TokenPair(access=data["access"], refresh=data["refresh"])
 
-    def refresh_access(self, *, refresh: str) -> str:
+    @staticmethod
+    def refresh_access(*, refresh: str) -> str:
         serializer = TokenRefreshSerializer(data={"refresh": refresh})
         serializer.is_valid(raise_exception=True)
         return serializer.validated_data["access"]
 
-    def resolve_username(self, *, username_or_email: str) -> str | None:
+    @staticmethod
+    def resolve_username(*, username_or_email: str) -> str | None:
         """Если это email — вернуть username. Иначе вернуть как есть."""
         value = username_or_email.strip()
         if "@" not in value:
