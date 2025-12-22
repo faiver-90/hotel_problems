@@ -193,6 +193,7 @@ tasks:
     cmds:
       - "poetry run ruff format ."
       - "poetry run ruff check . --fix"
+      - "black ."
       - "git add ."
       - 'git commit -m "{{.MSG}}" --no-verify'
       - "git push"
