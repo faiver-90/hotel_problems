@@ -33,6 +33,14 @@ urlpatterns: list[URLPattern] = [
     path("issues/", include("issues.urls")),
     path("notifications/", include("notifications.urls")),
     path("health_check/", health_check, name="health_check"),
+    # path(
+    #     "api/auth/token/",
+    #     TokenObtainPairView.as_view(),
+    #     name="token_obtain_pair",
+    # ),
+    # path(
+    #     "api/auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"
+    # ),
 ]
 
 if settings.DEBUG:

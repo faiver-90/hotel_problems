@@ -1,9 +1,32 @@
-<header>
-    <h1>{{ site_name }}</h1>
+<header class="border-bottom mb-3">
+  <div class="container d-flex align-items-center justify-content-between py-2">
+
+    <h1 class="h5 mb-0">{{ site_name }}</h1>
+
     <nav>
-        <ul>
-            <li><a href="/">Главная</a></li>
-            <li><a href="/about/">О нас</a></li>
-        </ul>
+      <ul class="nav align-items-center gap-2">
+
+        <li class="nav-item">
+          <a href="/" class="btn btn-outline-secondary btn-sm">Главная</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/about/" class="btn btn-outline-secondary btn-sm">О нас</a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <form method="post" action="{% url 'staff_logout' %}" class="d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-secondary btn-sm">
+                Logout
+              </button>
+            </form>
+          </li>
+        {% endif %}
+
+      </ul>
     </nav>
+
+  </div>
 </header>

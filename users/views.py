@@ -1,14 +1,138 @@
-# from django.contrib.auth.mixins import LoginRequiredMixin
-# from django.views.generic import TemplateView
-#
-#
-# class ManagerDashboardView(
-#     # LoginRequiredMixin,
-#     TemplateView):
-#     template_name = "users/dashboard.html"
-#
-#     def get_context_data(self, **kwargs):
-#         ctx = super().get_context_data(**kwargs)
-#         ctx["hotels"] = get_hotels_for_manager(self.request.user)
-#         ctx["issues"] = get_issues_for_manager(self.request.user)
-#         return ctx
+from __future__ import annotations
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.views import View
+
+from .forms import StaffLoginForm, StaffRegisterForm
+from .services.auth_tokens import AuthTokenService
+from .services.jwt_cookies import JWTCookieService
+
+
+class ServiceMixin:
+    token_service = AuthTokenService()
+    cookie_service = JWTCookieService()
+
+
+class StaffLoginView(ServiceMixin, View):
+    template_name = "staff/login.html"
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, self.template_name, {"form": StaffLoginForm()})
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = StaffLoginForm(request.POST)
+        if not form.is_valid():
+            return render(
+                request, self.template_name, {"form": form}, status=400
+            )
+
+        login_value = form.cleaned_data["username_or_email"]
+        password = form.cleaned_data["password"]
+
+        username = self.token_service.resolve_username(
+            username_or_email=login_value
+        )
+        if not username:
+            form.add_error("username_or_email", "Пользователь не найден")
+            return render(
+                request, self.template_name, {"form": form}, status=400
+            )
+
+        try:
+            tokens = self.token_service.obtain_pair_by_username(
+                username=username, password=password
+            )
+        except Exception:
+            form.add_error(None, "Неверные учетные данные")
+            return render(
+                request, self.template_name, {"form": form}, status=400
+            )
+
+        user = authenticate(request, username=username, password=password)
+        if user is None:
+            form.add_error(None, "Неверные учетные данные")
+            return render(
+                request, self.template_name, {"form": form}, status=400
+            )
+
+        login(request, user)
+
+        resp = redirect("dashboard")
+        self.cookie_service.set_tokens(
+            resp, access=tokens.access, refresh=tokens.refresh
+        )
+        return resp
+
+
+class StaffRegisterView(ServiceMixin, View):
+    template_name = "staff/register.html"
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(
+            request, self.template_name, {"form": StaffRegisterForm()}
+        )
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = StaffRegisterForm(request.POST)
+        if not form.is_valid():
+            return render(
+                request, self.template_name, {"form": form}, status=400
+            )
+
+        user = form.save(commit=False)
+        user.is_staff = True
+        user.save()
+
+        # автологин
+        tokens = self.token_service.obtain_pair_by_username(
+            username=user.username,
+            password=form.cleaned_data["password1"],
+        )
+
+        resp = redirect("success_register")
+        self.cookie_service.set_tokens(
+            resp, access=tokens.access, refresh=tokens.refresh
+        )
+        return resp
+
+
+class SuccessRegisterView(View):
+    template_name = "staff/success_register.html"
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, self.template_name)
+
+
+class StaffLogoutView(ServiceMixin, View):
+    def post(self, request: HttpRequest) -> HttpResponse:
+        logout(request)
+        resp = redirect("staff_login")
+        self.cookie_service.clear(resp)
+        return resp
+
+
+class RefreshAccessCookieView(ServiceMixin, View):
+    def post(self, request: HttpRequest) -> HttpResponse:
+        refresh = self.cookie_service.get_refresh(request)
+        if not refresh:
+            return HttpResponse("No refresh token", status=401)
+
+        try:
+            access = self.token_service.refresh_access(refresh=refresh)
+        except Exception:
+            return HttpResponse("Invalid refresh token", status=401)
+
+        resp = HttpResponse(status=204)
+        self.cookie_service.set_access(resp, access=access)
+        return resp
+
+
+class Dashboard(LoginRequiredMixin, View):
+    login_url = reverse_lazy("staff_login")
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(request, "staff/dashboard.html")

@@ -1,0 +1,36 @@
+{% extends "staff/_auth_card.html" %}
+
+{% block title %}Staff регистрация{% endblock %}
+{% block card_title %}Регистрация (Staff){% endblock %}
+
+{% block card_content %}
+<form method="post" class="vstack gap-3">
+  {% csrf_token %}
+
+  {# Рендер полей аккуратно (без form.as_p) #}
+  {% for field in form %}
+    <div>
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+
+      {% if field.help_text %}
+        <div class="form-text">{{ field.help_text }}</div>
+      {% endif %}
+
+      {% if field.errors %}
+        <div class="invalid-feedback d-block">
+          {{ field.errors }}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-primary w-100">Создать аккаунт</button>
+</form>
+
+<hr class="my-4">
+
+<div class="text-center">
+  <a class="link-secondary" href="{% url 'staff_login' %}">Уже есть аккаунт? Войти</a>
+</div>
+{% endblock %}
