@@ -46,6 +46,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.layout_context",
             ],
         },
     }
@@ -65,14 +66,12 @@ DATABASES = {
         "CONN_MAX_AGE": 60,
     }
 }
-print(
-    settings.database.postgres_db,
-    settings.database.postgres_user,
-    settings.database.postgres_password,
-    settings.database.postgres_host,
-)
-STATIC_URL = "static/"
+
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"

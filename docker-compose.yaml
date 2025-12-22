@@ -1,18 +1,18 @@
 services:
-  api:
-    build: .
-    volumes:
-      - ./:/app
-    env_file:
-      - ./.env
-    environment:
-      DJANGO_SETTINGS_MODULE: core.settings.dev
-    ports:
-      - "8000:8000"
-    command: python manage.py runserver 0.0.0.0:8000
-    depends_on:
-      postgres:
-        condition: service_healthy
+#  api:
+#    build: .
+#    volumes:
+#      - ./:/app
+#    env_file:
+#      - ./.env
+#    environment:
+#      DJANGO_SETTINGS_MODULE: core.settings.dev
+#    ports:
+#      - "8000:8000"
+#    command: python manage.py runserver 0.0.0.0:8000
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
 
   postgres:
     image: postgres:16

@@ -1,5 +1,5 @@
-from django.urls import path
+from django.urls import URLPattern
 
-urlpatterns: list[path] = [
+urlpatterns: list[URLPattern] = [
     # path("health_check/", health_check, name="health_check"),
 ]

@@ -1,5 +1,7 @@
-from django.urls import path
+from django.urls import URLPattern, path
 
-urlpatterns: list[path] = [
-    # path("health_check/", health_check, name="health_check"),
+from hotels.views import list_hotels
+
+urlpatterns: list[URLPattern] = [
+    path("list_hotels/", list_hotels, name="list_hotels"),
 ]
