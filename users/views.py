@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
 from django.views import View
 
 from .forms import StaffLoginForm, StaffRegisterForm
@@ -48,6 +51,15 @@ class StaffLoginView(ServiceMixin, View):
             return render(
                 request, self.template_name, {"form": form}, status=400
             )
+
+        user = authenticate(request, username=username, password=password)
+        if user is None:
+            form.add_error(None, "Неверные учетные данные")
+            return render(
+                request, self.template_name, {"form": form}, status=400
+            )
+
+        login(request, user)
 
         resp = redirect("dashboard")
         self.cookie_service.set_tokens(
@@ -97,7 +109,8 @@ class SuccessRegisterView(View):
 
 class StaffLogoutView(ServiceMixin, View):
     def post(self, request: HttpRequest) -> HttpResponse:
-        resp = redirect("/auth/login/")
+        logout(request)
+        resp = redirect("staff_login")
         self.cookie_service.clear(resp)
         return resp
 
@@ -118,6 +131,8 @@ class RefreshAccessCookieView(ServiceMixin, View):
         return resp
 
 
-class Dashboard(View):
+class Dashboard(LoginRequiredMixin, View):
+    login_url = reverse_lazy("staff_login")
+
     def get(self, request: HttpRequest) -> HttpResponse:
-        return render(request, "users/dashboard.html")
+        return render(request, "staff/dashboard.html")
