@@ -191,6 +191,8 @@ tasks:
       - sh: 'test -n "{{.MSG}}"'
         msg: 'Ошибка: Не указан комментарий. Использование: task commit -- "комментарий"'
     cmds:
+      - "poetry run ruff format ."
+      - "poetry run ruff check . --fix"
       - "git add ."
       - 'git commit -m "{{.MSG}}" --no-verify'
       - "git push"

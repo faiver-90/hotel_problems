@@ -27,7 +27,9 @@ class Settings(BaseSettings):
 
     secret_key: str = Field("", alias="SECRET_KEY")
 
-    allowed_hosts: str = Field("localhost,127.0.0.1", alias="DJANGO_ALLOWED_HOSTS")
+    allowed_hosts: str = Field(
+        "localhost,127.0.0.1", alias="DJANGO_ALLOWED_HOSTS"
+    )
     django_settings_module: str = Field(
         "core.settings.dev", alias="DJANGO_SETTINGS_MODULE"
     )

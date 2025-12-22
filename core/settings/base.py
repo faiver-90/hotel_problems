@@ -6,7 +6,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = settings.secret_key
 DEBUG = settings.debug
-ALLOWED_HOSTS = [h.strip() for h in settings.allowed_hosts.split(",") if h.strip()]
+ALLOWED_HOSTS = [
+    h.strip() for h in settings.allowed_hosts.split(",") if h.strip()
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
