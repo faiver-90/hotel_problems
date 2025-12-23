@@ -11,11 +11,11 @@ User = get_user_model()
 
 class StaffLoginForm(BootstrapFormMixin, forms.Form):
     username_or_email = forms.CharField(
-        label="Email или username",
+        label="Email or username",
         max_length=150,
     )
     password = forms.CharField(
-        label="Пароль",
+        label="Password",
         widget=forms.PasswordInput,
     )
 
@@ -30,7 +30,7 @@ class StaffRegisterForm(BootstrapFormMixin, UserCreationForm):
         required=True,
     )
     language = forms.ChoiceField(
-        label="Язык",
+        label="Language",
         required=False,
         choices=User.Language.choices,
     )
@@ -45,5 +45,5 @@ class StaffRegisterForm(BootstrapFormMixin, UserCreationForm):
 
         # Более читабельные лейблы
         self.fields["username"].label = "Username"
-        self.fields["password1"].label = "Пароль"
-        self.fields["password2"].label = "Повтор пароля"
+        self.fields["password1"].label = "Password"
+        self.fields["password2"].label = "Repeat Password"

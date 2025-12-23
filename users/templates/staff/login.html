@@ -1,7 +1,7 @@
 {% extends "staff/_auth_card.html" %}
 
-{% block title %}Staff вход{% endblock %}
-{% block card_title %}Вход (Staff){% endblock %}
+{% block title %}Staff login{% endblock %}
+{% block card_title %}Login (Staff){% endblock %}
 
 {% block card_content %}
 <form method="post" class="vstack gap-3">
@@ -23,12 +23,12 @@
     {% endif %}
   </div>
 
-  <button type="submit" class="btn btn-primary w-100">Войти</button>
+  <button type="submit" class="btn btn-primary w-100">Login</button>
 </form>
 
 <hr class="my-4">
 
 <div class="text-center">
-  <a class="link-secondary" href="{% url 'staff_register' %}">Регистрация</a>
+  <a class="link-secondary" href="{% url 'staff_register' %}">Registration</a>
 </div>
 {% endblock %}
