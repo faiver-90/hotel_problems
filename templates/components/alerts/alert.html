@@ -1,0 +1,7 @@
+<div class="alert alert-{{ variant|default:'info' }}{% if dismissible %} alert-dismissible fade show{% endif %}">
+  {{ message }}
+
+  {% if dismissible %}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  {% endif %}
+</div>

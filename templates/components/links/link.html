@@ -1,0 +1,14 @@
+<!--{# components/link.html #}-->
+<!--{#-->
+<!--  Параметры:-->
+<!--    label-->
+<!--    href-->
+<!--    color          — secondary, primary, danger...-->
+<!--    extra_classes-->
+<!--#}-->
+<a
+  href="{{ href }}"
+  class="link-{{ color|default:'secondary' }}{% if extra_classes %} {{ extra_classes }}{% endif %}"
+>
+  {{ label }}
+</a>

@@ -7,28 +7,15 @@
 <form method="post" class="vstack gap-3">
   {% csrf_token %}
 
-  <div>
-    <label class="form-label" for="{{ form.username_or_email.id_for_label }}">{{ form.username_or_email.label }}</label>
-    {{ form.username_or_email }}
-    {% if form.username_or_email.errors %}
-      <div class="invalid-feedback d-block">{{ form.username_or_email.errors }}</div>
-    {% endif %}
-  </div>
-
-  <div>
-    <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
-    {{ form.password }}
-    {% if form.password.errors %}
-      <div class="invalid-feedback d-block">{{ form.password.errors }}</div>
-    {% endif %}
-  </div>
-
-  <button type="submit" class="btn btn-primary w-100">Login</button>
+    {% include "components/inputs/input.html" with field=form %}
+    {% include "components/buttons/button.html" with label="Login" type="submit" variant="primary" block=True %}
 </form>
 
 <hr class="my-4">
 
 <div class="text-center">
-  <a class="link-secondary" href="{% url 'staff_register' %}">Registration</a>
+    {% url 'staff_register' as url_register %}
+    {% include "components/links/link.html" with label="Registration" href=url_register color="secondary" %}
+
 </div>
 {% endblock %}

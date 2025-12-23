@@ -37,7 +37,7 @@ class StaffLoginView(ServiceMixin, View):
             username_or_email=login_value
         )
         if not username:
-            form.add_error("username_or_email", "Пользователь не найден")
+            form.add_error("username_or_email", "User not found")
             return render(
                 request, self.template_name, {"form": form}, status=400
             )
@@ -47,14 +47,14 @@ class StaffLoginView(ServiceMixin, View):
                 username=username, password=password
             )
         except Exception:
-            form.add_error(None, "Неверные учетные данные")
+            form.add_error(None, "Incorrect credentials")
             return render(
                 request, self.template_name, {"form": form}, status=400
             )
 
         user = authenticate(request, username=username, password=password)
         if user is None:
-            form.add_error(None, "Неверные учетные данные")
+            form.add_error(None, "Incorrect credentials")
             return render(
                 request, self.template_name, {"form": form}, status=400
             )

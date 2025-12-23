@@ -7,20 +7,18 @@
       <ul class="nav align-items-center gap-2">
 
         <li class="nav-item">
-          <a href="/" class="btn btn-outline-secondary btn-sm">Главная</a>
+        {% include "components/links/link.html" with label="Main" href="/" color="text-secondary" extra_classes="text-muted text-decoration-none" %}
         </li>
 
         <li class="nav-item">
-          <a href="/about/" class="btn btn-outline-secondary btn-sm">О нас</a>
+        {% include "components/links/link.html" with label="About us" href="/about/" color="danger" extra_classes="text-muted text-decoration-none" %}
         </li>
 
         {% if request.user.is_authenticated %}
           <li class="nav-item">
             <form method="post" action="{% url 'staff_logout' %}" class="d-inline">
               {% csrf_token %}
-              <button type="submit" class="btn btn-outline-secondary btn-sm">
-                Logout
-              </button>
+                {% include "components/buttons/button.html" with label="Logout" type="submit" variant="danger" block=True %}
             </form>
           </li>
         {% endif %}

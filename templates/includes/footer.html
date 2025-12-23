@@ -3,8 +3,8 @@
     <span>© {{ site_name }} {% now "Y" %}</span>
 
     <nav class="d-flex gap-3">
-      <a href="/" class="text-muted text-decoration-none">Главная</a>
-      <a href="/about/" class="text-muted text-decoration-none">О нас</a>
+        {% include "components/links/link.html" with label="Main" href="/" color="text-secondary" extra_classes="text-muted text-decoration-none" %}
+        {% include "components/links/link.html" with label="About us" href="/about/" color="danger" extra_classes="text-muted text-decoration-none" %}
     </nav>
   </div>
 </footer>

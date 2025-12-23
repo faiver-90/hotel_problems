@@ -1,0 +1,13 @@
+<div class="card shadow-sm mb-4">
+  {% if title %}
+    <div class="card-header">{{ title }}</div>
+  {% endif %}
+
+  <div class="card-body">
+    {% block card_body %}{% endblock %}
+  </div>
+
+  {% if footer %}
+    <div class="card-footer">{{ footer }}</div>
+  {% endif %}
+</div>
