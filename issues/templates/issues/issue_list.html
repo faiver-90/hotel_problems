@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Issues{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Issues</h1>
+
+{% include "components/tables/table.html" with columns=columns rows=rows %}
+
+{% endblock %}

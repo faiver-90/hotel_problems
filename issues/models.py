@@ -11,11 +11,11 @@ from common.utils import formater_str_models
 class IssueCategory(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    hotel = models.ForeignKey(
-        "hotels.Hotel",
-        on_delete=models.CASCADE,
-        related_name="issue_categories",
-    )
+    # hotel = models.ForeignKey(
+    #     "hotels.Hotel",
+    #     on_delete=models.CASCADE,
+    #     related_name="issue_categories",
+    # )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
 
@@ -31,7 +31,7 @@ class IssueCategory(BaseModel):
 
     class Meta:
         indexes = [
-            models.Index(fields=["hotel", "is_active"]),
+            models.Index(fields=["name", "is_active"]),
         ]
 
     def __str__(self) -> str:

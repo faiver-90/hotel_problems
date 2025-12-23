@@ -11,10 +11,10 @@ from issues.models import (
 
 @admin.register(IssueCategory)
 class IssueCategoryAdmin(admin.ModelAdmin):
-    list_display = ["name", "hotel", "department", "is_active"]
-    list_filter = ["hotel", "department", "is_active"]
+    list_display = ["name", "department", "is_active"]
+    list_filter = ["department", "is_active"]
     search_fields = ["name", "description"]
-    ordering = ["hotel", "name"]
+    ordering = ["name"]
 
 
 @admin.register(Issue)

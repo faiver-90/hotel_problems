@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Issue {{ issue.title }}{% endblock %}
+
+{% block content %}
+
+<h1 class="h4 mb-4">
+  Issue: {{ issue.title }}
+</h1>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+
+    <div class="row g-3">
+
+      <div class="col-12">
+        <label class="text-muted small">Title</label>
+        <div class="fs-5 fw-semibold">{{ issue.title }}</div>
+      </div>
+
+      {% if issue.description %}
+      <div class="col-12">
+        <label class="text-muted small">Description</label>
+        <div>{{ issue.description }}</div>
+      </div>
+      {% endif %}
+
+      <div class="col-md-4">
+        <label class="text-muted small">Status</label>
+        <div>
+          <span class="badge bg-primary">{{ issue.get_status_display }}</span>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">Priority</label>
+        <div>
+          {% if issue.priority == issue.Priority.CRITICAL %}
+            <span class="badge bg-danger">{{ issue.get_priority_display }}</span>
+          {% elif issue.priority == issue.Priority.HIGH %}
+            <span class="badge bg-warning text-dark">{{ issue.get_priority_display }}</span>
+          {% else %}
+            <span class="badge bg-secondary">{{ issue.get_priority_display }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">Source</label>
+        <div>{{ issue.get_source_display }}</div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">Hotel</label>
+        <div>{{ issue.hotel.name }}</div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">Room</label>
+        <div>{{ issue.room.number }}</div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">Category</label>
+        <div>{{ issue.category.name }}</div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">Assigned department</label>
+        <div>{{ issue.assigned_department.name }}</div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">Assigned user</label>
+        <div>
+          {% if issue.assigned_user %}
+            {{ issue.assigned_user.full_name }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">SLA due</label>
+        <div>
+          {% if issue.sla_due_at %}
+            {{ issue.sla_due_at|date:"Y-m-d H:i" }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">Resolved at</label>
+        <div>
+          {% if issue.resolved_at %}
+            {{ issue.resolved_at|date:"Y-m-d H:i" }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="text-muted small">Closed at</label>
+        <div>
+          {% if issue.closed_at %}
+            {{ issue.closed_at|date:"Y-m-d H:i" }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="text-muted small">Last guest message</label>
+        <div>
+          {% if issue.last_guest_message_at %}
+            {{ issue.last_guest_message_at|date:"Y-m-d H:i" }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="text-muted small">Last staff response</label>
+        <div>
+          {% if issue.last_staff_response_at %}
+            {{ issue.last_staff_response_at|date:"Y-m-d H:i" }}
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<a href="{% url 'issue_list' %}" class="btn btn-outline-secondary">
+  Back to list
+</a>
+
+{% endblock %}

@@ -8,6 +8,12 @@ from common.common_base_model import BaseModel
 from common.utils import formater_str_models
 
 
+class Visibility(models.TextChoices):
+    DEPARTMENT = "department", "Department only"  # staff, dept_manager
+    HOTEL = "hotel", "Whole hotel"  # ops_manager, gm
+    GLOBAL = "global", "All hotels"  # admin
+
+
 class Hotel(BaseModel):
     id = models.AutoField(primary_key=True, editable=False)
 
@@ -49,6 +55,11 @@ class Role(BaseModel):
         max_length=32, unique=True
     )  # staff/dept_manager/ops_manager/gm/admin
     name = models.CharField(max_length=128)
+    visibility = models.CharField(
+        max_length=16,
+        choices=Visibility.choices,
+        default=Visibility.DEPARTMENT,
+    )
 
     def __str__(self) -> str:
         return formater_str_models(self.name)
