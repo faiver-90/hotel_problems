@@ -199,6 +199,40 @@ tasks:
       - "git push"
       - 'echo "Коммит успешно выполнен и отправлен."'
 
+  git:delete-branch:
+    desc: Delete local and remote branch safely
+    vars:
+      BR: '{{.CLI_ARGS}}'
+    cmds:
+      - |
+        # Ask the user only if no CLI arg provided
+        if [ -z "{{.BR}}" ]; then
+          read -p "Enter branch name: " BRANCH;
+        else
+          BRANCH="{{.BR}}";
+        fi
+        
+        echo "Checking branch: $BRANCH"
+        
+        # Check local branch
+        if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+          echo "Deleting LOCAL branch: $BRANCH"
+          git branch -d "$BRANCH" || echo "Failed to delete LOCAL branch '$BRANCH' (maybe unmerged)."
+        else
+          echo "LOCAL branch '$BRANCH' does NOT exist, skipping."
+        fi
+        
+        # Check remote branch
+        if git ls-remote --exit-code --heads origin "$BRANCH" > /dev/null 2>&1; then
+          echo "Deleting REMOTE branch: $BRANCH"
+          git push origin --delete "$BRANCH" || echo "Failed to delete REMOTE branch '$BRANCH'."
+        else
+          echo "REMOTE branch '$BRANCH' does NOT exist, skipping."
+        fi
+        
+        echo "Done."
+    shell: bash
+
   # ===== Docker Hub (image build/push) =====
   docker:login:
     desc: "Login to Docker Hub"
