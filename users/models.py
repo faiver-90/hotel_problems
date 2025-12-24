@@ -8,7 +8,7 @@ from django.db import models
 from django.utils import timezone
 
 from common.common_base_model import BaseModel
-from common.utils import formater_str_models
+from common.utils.formater import formater_str_models
 
 
 def default_valid_until() -> datetime:

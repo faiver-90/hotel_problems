@@ -5,7 +5,7 @@ import uuid
 from django.db import models
 
 from common.common_base_model import BaseModel
-from common.utils import formater_str_models
+from common.utils.formater import formater_str_models
 
 
 class Visibility(models.TextChoices):
@@ -93,7 +93,7 @@ class HotelUserRole(BaseModel):
         ]
 
     def __str__(self) -> str:
-        return formater_str_models(self.hotel, self.role)
+        return formater_str_models(self.user.email, self.hotel, self.role)
 
 
 class Room(BaseModel):
