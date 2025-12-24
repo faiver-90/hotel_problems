@@ -1,0 +1,44 @@
+{# issues/templates/issues/_issue_table.html #}
+{% extends "components/tables/base.html" %}
+
+{% block table_head %}
+  <th>Title</th>
+  <th>Room</th>
+  <th>Category</th>
+  <th>Status</th>
+  <th>Priority</th>
+  <th>Assigned</th>
+  <th class="text-end">Actions</th>
+{% endblock %}
+
+{% block table_body %}
+  {% for issue in issues %}
+    <tr>
+      <td>
+        <a href="{{ issue.get_absolute_url }}">
+          {{ issue.title }}
+        </a>
+      </td>
+      <td>{{ issue.room.number }}</td>
+      <td>{{ issue.category.name }}</td>
+      <td>{{ issue.get_status_display }}</td>
+      <td>{{ issue.get_priority_display }}</td>
+      <td>
+        {% if issue.assigned_user %}
+          {{ issue.assigned_user.email }}
+        {% else %}
+          &mdash;
+        {% endif %}
+      </td>
+      <td class="text-end">
+        {% include "issues/_issue_actions.html" with issue=issue %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr>
+      <td colspan="7" class="text-center text-muted py-4">
+        No issues
+      </td>
+    </tr>
+  {% endfor %}
+{% endblock %}

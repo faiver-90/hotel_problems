@@ -1,0 +1,40 @@
+{# Кнопки смены статуса для строки issue #}
+<form
+  method="post"
+  action="{% url 'issue_change_status' issue.pk %}"
+  class="d-inline-flex gap-1"
+>
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+  {% for status in issue.get_available_status_transitions %}
+    {% if status == issue.Status.IN_PROGRESS %}
+      <button
+        type="submit"
+        name="status"
+        value="{{ status }}"
+        class="btn btn-sm btn-outline-primary"
+      >
+        Start
+      </button>
+    {% elif status == issue.Status.RESOLVED %}
+      <button
+        type="submit"
+        name="status"
+        value="{{ status }}"
+        class="btn btn-sm btn-outline-success"
+      >
+        Resolve
+      </button>
+    {% elif status == issue.Status.CLOSED %}
+      <button
+        type="submit"
+        name="status"
+        value="{{ status }}"
+        class="btn btn-sm btn-outline-secondary"
+      >
+        Close
+      </button>
+    {% endif %}
+  {% endfor %}
+</form>

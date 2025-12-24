@@ -25,12 +25,15 @@
       </div>
       {% endif %}
 
-      <div class="col-md-4">
-        <label class="text-muted small">Status</label>
-        <div>
-          <span class="badge bg-primary">{{ issue.get_status_display }}</span>
-        </div>
+    <div class="col-md-4">
+      <label class="text-muted small">Status</label>
+      <div class="mb-2">
+        <span class="badge bg-primary">{{ issue.get_status_display }}</span>
       </div>
+
+      {# компонент с кнопками статусов #}
+      {% include "issues/_issue_status_controls.html" with issue=issue %}
+    </div>
 
       <div class="col-md-4">
         <label class="text-muted small">Priority</label>
@@ -71,15 +74,15 @@
       </div>
 
       <div class="col-md-4">
-        <label class="text-muted small">Assigned user</label>
-        <div>
-          {% if issue.assigned_user %}
-            {{ issue.assigned_user.full_name }}
-          {% else %}
-            —
-          {% endif %}
+          <label class="text-muted small">Assigned user</label>
+          <div>
+            {% if issue.assigned_user %}
+              {{ issue.assigned_user.username }}
+            {% else %}
+              —
+            {% endif %}
+          </div>
         </div>
-      </div>
 
       <div class="col-md-4">
         <label class="text-muted small">SLA due</label>

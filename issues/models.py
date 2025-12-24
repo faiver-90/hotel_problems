@@ -3,6 +3,7 @@ from __future__ import annotations
 import uuid
 
 from django.db import models
+from django.urls import reverse
 
 from common.common_base_model import BaseModel
 from common.utils.formater import formater_str_models
@@ -125,6 +126,9 @@ class Issue(BaseModel):
 
     def __str__(self) -> str:
         return formater_str_models(self.hotel, self.status)
+
+    def get_absolute_url(self) -> str:
+        return reverse("issue_detail", args=[self.pk])
 
 
 class IssueComment(BaseModel):

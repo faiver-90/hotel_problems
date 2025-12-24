@@ -3,8 +3,7 @@
 {% block title %}Issues{% endblock %}
 
 {% block content %}
-<h1 class="h4 mb-3">Issues</h1>
+  <h1 class="h4 mb-3">Issues</h1>
 
-{% include "components/tables/table.html" with columns=columns rows=rows %}
-
+  {% include "issues/_issue_table.html" with issues=issues %}
 {% endblock %}

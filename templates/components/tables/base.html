@@ -1,0 +1,13 @@
+<table class="table table-hover align-middle">
+  <thead>
+    <tr>
+      {# заголовки столбцов переопределяются в дочернем шаблоне #}
+      {% block table_head %}{% endblock %}
+    </tr>
+  </thead>
+
+  <tbody>
+    {# строки таблицы переопределяются в дочернем шаблоне #}
+    {% block table_body %}{% endblock %}
+  </tbody>
+</table>
