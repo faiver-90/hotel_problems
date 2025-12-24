@@ -29,6 +29,13 @@ class IssueDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         return get_visible_issues_for_user(self.request.user)
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        user_roles = self.request._user_scope.roles
+        ctx["user_roles"] = user_roles
+        return ctx
+
 
 class IssueStatusChangeView(LoginRequiredMixin, View):
     """

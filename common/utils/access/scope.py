@@ -18,6 +18,7 @@ class UserScope:
     is_global: bool
     hotel_ids: frozenset[int]
     dept_pairs: frozenset[tuple[int, int]]
+    roles: list[HotelUserRole] = None
 
 
 def build_user_scope(user: StaffUser) -> UserScope:
@@ -54,8 +55,11 @@ def build_user_scope(user: StaffUser) -> UserScope:
         elif vis == Visibility.DEPARTMENT and r.hotel_id and r.department_id:
             dept_pairs.add((r.hotel_id, r.department_id))
 
+    roles = [r.role for r in roles]
+
     return UserScope(
         is_global=False,
         hotel_ids=frozenset(hotel_ids),
         dept_pairs=frozenset(dept_pairs),
+        roles=roles,
     )
